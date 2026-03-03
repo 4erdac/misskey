@@ -27,7 +27,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 			</div>
 			<MkKeyValue>
 				<template #key>{{ i18n.ts.description }}</template>
-				<template #value>{{ instance.description }}</template>
+				<template #value><Mfm :text="instance.description"></Mfm></template>
 			</MkKeyValue>
 
 			<FormSection v-if="iAmModerator">
