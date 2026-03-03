@@ -48,6 +48,13 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<i class="ti ti-device-usb" style="font-size: medium;"></i>{{ i18n.ts.signinWithPasskey }}
 			</MkButton>
 		</div>
+
+		<!-- OIDC Authentication -->
+		<div v-if="oidcEnabled" style="margin-top: 16px;">
+			<MkButton type="button" style="margin: auto auto;" large rounded primary @click="onOidcClick">
+				<i class="ti ti-key" style="font-size: medium;"></i>{{ oidcButtonLabel }}
+			</MkButton>
+		</div>
 	</div>
 </div>
 </template>
@@ -65,6 +72,8 @@ import * as os from '@/os.js';
 import MkButton from '@/components/MkButton.vue';
 import MkInput from '@/components/MkInput.vue';
 import MkInfo from '@/components/MkInfo.vue';
+import { instance } from '@/instance.js';
+import { misskeyApi } from '@/utility/misskey-api.js';
 
 const props = withDefaults(defineProps<{
 	message?: string,
@@ -84,6 +93,21 @@ const emit = defineEmits<{
 const host = toUnicode(configHost);
 
 const username = ref(props.initialUsername ?? '');
+
+// OIDC configuration
+const oidcEnabled = ref(false);
+const oidcButtonLabel = ref('Sign in with OIDC');
+
+// Check if OIDC is enabled
+if (instance.oidcEnabled) {
+	oidcEnabled.value = true;
+	oidcButtonLabel.value = instance.oidcButtonLabel || 'Sign in with OIDC';
+}
+
+// OIDC login handler
+function onOidcClick() {
+	window.location.href = '/auth/oidc/init';
+}
 
 //#region Open on remote
 function openRemote(options: OpenOnRemoteOptions, targetHost?: string): void {

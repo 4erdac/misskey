@@ -114,7 +114,17 @@ type Source = {
 			disableQueryTruncation?: boolean,
 			enableQueryParamLogging?: boolean,
 		}
-	}
+	};
+	oidc?: {
+		enabled: boolean;
+		issuer: string;
+		clientId: string;
+		clientSecret: string;
+		scope: string;
+		buttonLabel?: string;
+		autoLinkByEmail?: boolean;
+		allowUsernameSuffixing?: boolean;
+	};
 };
 
 export type Config = {
@@ -175,7 +185,17 @@ export type Config = {
 			disableQueryTruncation?: boolean,
 			enableQueryParamLogging?: boolean,
 		}
-	}
+	};
+	oidc?: {
+		enabled: boolean;
+		issuer: string;
+		clientId: string;
+		clientSecret: string;
+		scope: string;
+		buttonLabel?: string;
+		autoLinkByEmail?: boolean;
+		allowUsernameSuffixing?: boolean;
+	};
 
 	version: string;
 	publishTarballInsteadOfProvideRepositoryUrl: boolean;
@@ -346,6 +366,7 @@ export function loadConfig(): Config {
 		deactivateAntennaThreshold: config.deactivateAntennaThreshold ?? (1000 * 60 * 60 * 24 * 7),
 		pidFile: config.pidFile,
 		logging: config.logging,
+		oidc: config.oidc,
 	};
 }
 
