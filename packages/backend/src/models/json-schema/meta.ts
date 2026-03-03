@@ -310,6 +310,14 @@ export const packedMetaLiteSchema = {
 			enum: ['all', 'specified', 'none'],
 			optional: false, nullable: false,
 		},
+		oidcEnabled: {
+			type: 'boolean',
+			optional: false, nullable: false,
+		},
+		oidcButtonLabel: {
+			type: 'string',
+			optional: true, nullable: true,
+		},
 	},
 } as const;
 

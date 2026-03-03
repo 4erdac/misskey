@@ -44,6 +44,7 @@ import {
 	MiNoteReaction,
 	MiNoteThreadMuting,
 	MiNoteDraft,
+	MiOidcRegistration,
 	MiPage,
 	MiPageLike,
 	MiPasswordResetRequest,
@@ -340,6 +341,12 @@ const $signinsRepository: Provider = {
 	inject: [DI.db],
 };
 
+const $oidcRegistrationsRepository: Provider = {
+	provide: DI.oidcRegistrationsRepository,
+	useFactory: (db: DataSource) => db.getRepository(MiOidcRegistration).extend(miRepository as MiRepository<MiOidcRegistration>),
+	inject: [DI.db],
+};
+
 const $pagesRepository: Provider = {
 	provide: DI.pagesRepository,
 	useFactory: (db: DataSource) => db.getRepository(MiPage).extend(miRepository as MiRepository<MiPage>),
@@ -589,6 +596,7 @@ const $reversiGamesRepository: Provider = {
 		$authSessionsRepository,
 		$accessTokensRepository,
 		$signinsRepository,
+		$oidcRegistrationsRepository,
 		$pagesRepository,
 		$pageLikesRepository,
 		$galleryPostsRepository,
@@ -667,6 +675,7 @@ const $reversiGamesRepository: Provider = {
 		$authSessionsRepository,
 		$accessTokensRepository,
 		$signinsRepository,
+		$oidcRegistrationsRepository,
 		$pagesRepository,
 		$pageLikesRepository,
 		$galleryPostsRepository,

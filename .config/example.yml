@@ -77,7 +77,7 @@
 #───┘ URL └─────────────────────────────────────────────────────
 
 # Final accessible URL seen by a user.
-url: https://example.tld/
+url: http://example.tld/
 
 # ONCE YOU HAVE STARTED THE INSTANCE, DO NOT CHANGE THE
 # URL SETTINGS AFTER THAT!
@@ -399,3 +399,14 @@ proxyBypassHosts:
 #     # Disable query truncation. If set to true, the full text of the query will be output to the log.
 #     # default: false
 #     disableQueryTruncation: false
+
+# OIDC settings
+# oidc:
+#   enabled: false
+#   issuer: 'https://example.com'
+#   clientId: 'client-id'
+#   clientSecret: 'client-secret'
+#   scope: 'openid profile email'
+#   buttonLabel: 'Sign in with OIDC'
+#   autoLinkByEmail: true
+#   allowUsernameSuffixing: true
