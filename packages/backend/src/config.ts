@@ -124,6 +124,8 @@ type Source = {
 		buttonLabel?: string;
 		autoLinkByEmail?: boolean;
 		allowUsernameSuffixing?: boolean;
+		hideLoginForm?: boolean;
+		registrationUrl?: string;
 	};
 };
 
@@ -195,6 +197,8 @@ export type Config = {
 		buttonLabel?: string;
 		autoLinkByEmail?: boolean;
 		allowUsernameSuffixing?: boolean;
+		hideLoginForm?: boolean;
+		registrationUrl?: string;
 	};
 
 	version: string;

@@ -137,6 +137,8 @@ export class MetaEntityService {
 			federation: this.meta.federation,
 			oidcEnabled: !!this.config.oidc?.enabled,
 			oidcButtonLabel: this.config.oidc?.buttonLabel,
+			oidcHideLoginForm: !!this.config.oidc?.hideLoginForm,
+			oidcRegistrationUrl: this.config.oidc?.registrationUrl,
 		};
 
 		return packed;
