@@ -317,6 +317,14 @@ export const packedMetaLiteSchema = {
 			type: 'string',
 			optional: true, nullable: true,
 		},
+		oidcHideLoginForm: {
+			type: 'boolean',
+			optional: false, nullable: false,
+		},
+		oidcRegistrationUrl: {
+			type: 'string',
+			optional: true, nullable: true,
+		},
 	},
 } as const;
 

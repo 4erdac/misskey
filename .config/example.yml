@@ -410,3 +410,5 @@ proxyBypassHosts:
 #   buttonLabel: 'Sign in with OIDC'
 #   autoLinkByEmail: true
 #   allowUsernameSuffixing: true
+#   hideLoginForm: false
+#   registrationUrl: 'https://example.com/signup'

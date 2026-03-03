@@ -141,12 +141,6 @@ export async function common(createVue: () => Promise<App<Element>>) {
 	}
 	//#endregion
 
-	//#region token
-	if (serverContext?.token) {
-		await login(serverContext.token);
-	}
-	//#endregion
-
 	//#region Sync dark mode
 	if (prefer.s.syncDeviceDarkMode) {
 		store.set('darkMode', isDeviceDarkmode());

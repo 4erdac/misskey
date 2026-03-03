@@ -31,23 +31,25 @@ SPDX-License-Identifier: AGPL-3.0-only
 		</div>
 
 		<!-- username入力 -->
-		<form class="_gaps_s" @submit.prevent="emit('usernameSubmitted', username)">
-			<MkInput v-model="username" :placeholder="i18n.ts.username" type="text" pattern="^[a-zA-Z0-9_]+$" :spellcheck="false" autocomplete="username webauthn" autofocus required data-cy-signin-username>
-				<template #prefix>@</template>
-				<template #suffix>@{{ host }}</template>
-			</MkInput>
-			<MkButton type="submit" large primary rounded style="margin: 0 auto;" data-cy-signin-page-input-continue>{{ i18n.ts.continue }} <i class="ti ti-arrow-right"></i></MkButton>
-		</form>
+		<template v-if="!oidcHideLoginForm">
+			<form class="_gaps_s" @submit.prevent="emit('usernameSubmitted', username)">
+				<MkInput v-model="username" :placeholder="i18n.ts.username" type="text" pattern="^[a-zA-Z0-9_]+$" :spellcheck="false" autocomplete="username webauthn" autofocus required data-cy-signin-username>
+					<template #prefix>@</template>
+					<template #suffix>@{{ host }}</template>
+				</MkInput>
+				<MkButton type="submit" large primary rounded style="margin: 0 auto;" data-cy-signin-page-input-continue>{{ i18n.ts.continue }} <i class="ti ti-arrow-right"></i></MkButton>
+			</form>
 
-		<!-- パスワードレスログイン -->
-		<div :class="$style.orHr">
-			<p :class="$style.orMsg">{{ i18n.ts.or }}</p>
-		</div>
-		<div>
-			<MkButton type="submit" style="margin: auto auto;" large rounded primary gradate @click="emit('passkeyClick', $event)">
-				<i class="ti ti-device-usb" style="font-size: medium;"></i>{{ i18n.ts.signinWithPasskey }}
-			</MkButton>
-		</div>
+			<!-- パスワードレスログイン -->
+			<div :class="$style.orHr">
+				<p :class="$style.orMsg">{{ i18n.ts.or }}</p>
+			</div>
+			<div>
+				<MkButton type="submit" style="margin: auto auto;" large rounded primary gradate @click="emit('passkeyClick', $event)">
+					<i class="ti ti-device-usb" style="font-size: medium;"></i>{{ i18n.ts.signinWithPasskey }}
+				</MkButton>
+			</div>
+		</template>
 
 		<!-- OIDC Authentication -->
 		<div v-if="oidcEnabled" style="margin-top: 16px;">
@@ -97,11 +99,13 @@ const username = ref(props.initialUsername ?? '');
 // OIDC configuration
 const oidcEnabled = ref(false);
 const oidcButtonLabel = ref('Sign in with OIDC');
+const oidcHideLoginForm = ref(false);
 
 // Check if OIDC is enabled
 if (instance.oidcEnabled) {
 	oidcEnabled.value = true;
 	oidcButtonLabel.value = instance.oidcButtonLabel || 'Sign in with OIDC';
+	oidcHideLoginForm.value = instance.oidcHideLoginForm || false;
 }
 
 // OIDC login handler
