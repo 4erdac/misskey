@@ -5,12 +5,14 @@
 
 import { Inject, Injectable } from '@nestjs/common';
 import { IsNull } from 'typeorm';
-import type { OidcRegistrationsRepository, UserProfilesRepository, UsersRepository } from '@/models/_.js';
+import { MiUserKeypair } from '@/models/UserKeypair.js';
+import type { OidcRegistrationsRepository, UserProfilesRepository, UserKeypairsRepository, UsersRepository } from '@/models/_.js';
 import { DI } from '@/di-symbols.js';
 import { bindThis } from '@/decorators.js';
 import { IdService } from '@/core/IdService.js';
 import type { MiLocalUser } from '@/models/User.js';
 import type { Config } from '@/config.js';
+import { genRsaKeyPair } from '@/misc/gen-key-pair.js';
 
 export type OidcUserClaims = {
 	sub: string;
@@ -34,6 +36,9 @@ export class OidcAuthService {
 
 		@Inject(DI.userProfilesRepository)
 		private userProfilesRepository: UserProfilesRepository,
+
+		@Inject(DI.userKeypairsRepository)
+		private userKeypairsRepository: UserKeypairsRepository,
 
 		private idService: IdService,
 	) {
@@ -86,6 +91,17 @@ export class OidcAuthService {
 		user ??= await this.createUserFromOidc(claims);
 		await this.linkOidcAccount(user, claims.sub, issuer);
 
+		// Ensure keypair exists
+		const keypair = await this.userKeypairsRepository.findOneBy({ userId: user.id });
+		if (keypair == null) {
+			const keys = await genRsaKeyPair();
+			await this.userKeypairsRepository.save(new MiUserKeypair({
+				userId: user.id,
+				publicKey: keys.publicKey,
+				privateKey: keys.privateKey,
+			}));
+		}
+
 		return user;
 	}
 
@@ -123,7 +139,7 @@ export class OidcAuthService {
 	private async generateUniqueUsername(baseUsername: string): Promise<string> {
 		// Sanitize username (only alphanumeric and underscore)
 		let username = baseUsername.replace(/[^a-zA-Z0-9_]/g, '_');
-		
+
 		// Ensure it starts with a letter
 		if (!/^[a-zA-Z]/.test(username)) {
 			username = 'u_' + username;
@@ -141,7 +157,7 @@ export class OidcAuthService {
 		if (!exists) {
 			return username;
 		}
-		
+
 		// If suffixing is disabled, throw error if username is already taken
 		if (this.config.oidc?.allowUsernameSuffixing === false) {
 			throw new Error('DUPLICATED_USERNAME');
@@ -153,7 +169,7 @@ export class OidcAuthService {
 			const suffix = counter.toString();
 			const maxBaseLength = 20 - suffix.length - 1; // -1 for underscore
 			const candidateUsername = username.substring(0, maxBaseLength) + '_' + suffix;
-			
+
 			exists = await this.usersRepository.existsBy({
 				usernameLower: candidateUsername.toLowerCase(),
 				host: IsNull(),
@@ -172,7 +188,7 @@ export class OidcAuthService {
 	@bindThis
 	private async linkOidcAccount(user: MiLocalUser, sub: string, issuer: string): Promise<void> {
 		const now = new Date();
-		
+
 		await this.oidcRegistrationsRepository.insert({
 			id: this.idService.gen(),
 			userId: user.id,
