@@ -5518,6 +5518,10 @@ export type components = {
             maxFileSize: number;
             /** @enum {string} */
             federation: 'all' | 'specified' | 'none';
+            oidcEnabled: boolean;
+            oidcButtonLabel?: string | null;
+            oidcHideLoginForm: boolean;
+            oidcRegistrationUrl?: string | null;
         };
         MetaDetailedOnly: {
             features?: {
