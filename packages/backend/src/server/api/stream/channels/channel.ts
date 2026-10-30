@@ -53,19 +53,12 @@ export class ChannelChannel extends Channel {
 		if (!this.isNoteVisibleForMe(note)) return;
 		if (this.isNoteMutedOrBlocked(note)) return;
 
-		const { shouldSkip } = await this.noteStreamingHidingService.processHiding(note, this.user?.id ?? null);
-		if (shouldSkip) return;
+		const filtered = await this.noteStreamingHidingService.filter(note, this.user?.id ?? null);
+		if (!filtered) return;
+		// eslint-disable-next-line no-param-reassign -- これ以降元の Note オブジェクトは見てはいけないので、いっそ再代入した方が安全
+		note = filtered;
 
-		if (this.user) {
-			if (isRenotePacked(note) && !isQuotePacked(note)) {
-				if (note.renote && Object.keys(note.renote.reactions).length > 0) {
-					const myRenoteReaction = await this.noteEntityService.populateMyReaction(note.renote, this.user.id);
-					note.renote.myReaction = myRenoteReaction;
-				}
-			}
-		}
-
-		this.send('note', note);
+		this.send('note', await this.noteEntityService.withMyRenoteReaction(note, this.user?.id ?? null));
 	}
 
 	/*
@@ -73,7 +66,7 @@ export class ChannelChannel extends Channel {
 	 */
 	protected override isNoteMutedOrBlocked(note: Packed<'Note'>): boolean {
 		// 流れてきたNoteがインスタンスミュートしたインスタンスが関わる
-		if (isInstanceMuted(note, new Set<string>(this.userProfile?.mutedInstances ?? []))) return true;
+		if (isInstanceMuted(note, this.userMutedInstances)) return true;
 
 		// 流れてきたNoteがミュートしているユーザーが関わる
 		if (isUserRelated(note, this.userIdsWhoMeMuting)) return true;
