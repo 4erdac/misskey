@@ -8,22 +8,22 @@ import { id } from './util/id.js';
 import { MiUser } from './User.js';
 
 @Entity('oidc_registration')
-@Index(['issuer', 'sub'], { unique: true })
+@Index('IDX_oidc_registration_issuer_sub', ['issuer', 'sub'], { unique: true })
 export class MiOidcRegistration {
 	@PrimaryColumn(id())
 	public id: string;
 
-	@Index()
+	@Index('IDX_oidc_registration_userId')
 	@Column(id())
 	public userId: MiUser['id'];
 
 	@ManyToOne(type => MiUser, {
 		onDelete: 'CASCADE',
 	})
-	@JoinColumn()
+	@JoinColumn({ foreignKeyConstraintName: 'FK_oidc_registration_userId' })
 	public user: MiUser | null;
 
-	@Index()
+	@Index('IDX_oidc_registration_sub')
 	@Column('varchar', {
 		length: 256,
 		comment: 'OIDC subject identifier',
